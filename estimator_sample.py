@@ -13,14 +13,23 @@ qc.h(0)  # Apply Hadamard gate to qubit 0
 qc.cx(0, 1)  # Apply CNOT gate to entangle qubit 0 and qubit 1
 qc.measure([0, 1], [0, 1])  # Measure both qubits
 qc.draw("mpl")
+# set observables for the expectation value
+from qiskit.quantum_info import SparsePauliOp
+ZZ = SparsePauliOp.from_list([("ZZ", 1)])  # Define the observable for ZZ measurement
+# Note: The SparsePauliOp is used to define the observable for expectation value estimation.
+# If you want to sample the results, you would typically use a different observable or measurement setup.
 # Transpile the circuit using a preset pass manager
+from qiskit.transpiler.preset_passmanagers import generate_preset_pass_manager
+
 pm = generate_preset_pass_manager(backend=backend, optimization_level=3)
 # Transpile the circuit
 transpiled_circuit = pm.run(qc)
 # Create an estimator instance
-estimator = Estimator(mode=backend)
-# Estimate the expectation value of the measurement
-job = estimator.run([transpiled_circuit],[ZZ])
+estimator = Estimator(backend=backend)
+# map observables to the circuit
+observables = [ZZ.apply_layout(transpiled_circuit.layout)]
+# run estimator to get the expectation value
+job = estimator.run([(transpiled_circuit, observables)])
 # Get the results
 results = job.result()
 # Plot the histogram of results using cregisters
