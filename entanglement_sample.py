@@ -24,7 +24,7 @@ sampler = Sampler(mode=backend)
 job = sampler.run([transpiled_circuit], shots=1024)
 # Get the results
 results = job.result()
-# Plot the histogram of results using measurement counts
-counts = results[0].data.meas.get_counts()
+# Plot the histogram of results using cregisters
+counts = results[0].data.c.get_counts()
 # Plot the histogram
 plot_histogram(counts, title="Entanglement Measurement Results")
