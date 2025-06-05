@@ -32,9 +32,12 @@ observables = [ZZ.apply_layout(transpiled_circuit.layout)]
 job = estimator.run([(transpiled_circuit, observables)])
 # Get the results
 results = job.result()
-# Plot the histogram of results using cregisters
-counts = results[0].data.c.get_counts()
-# Plot the histogram
-plot_histogram(counts, title="Entanglement Measurement Results")
-# Note: The EstimatorV2 is used here for estimating expectation values, which is different from sampling.
-# If you want to sample the results, you would typically use a SamplerV2 instead. 
+# Get estimator results
+from matplotlib import pyplot as plt
+values = results[0].data.evs
+errors = results[0].data.stds
+# plotting graph
+plt.plot(["ZZ"], values, "-o")
+plt.xlabel("Observables")
+plt.ylabel("Values")
+plt.show()
